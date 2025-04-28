@@ -17,3 +17,18 @@ class MailingRecipient(models.Model):
         verbose_name = 'Получатель рассылки'
         verbose_name_plural = 'Получатели рассылки'
         ordering = ['owner', 'email', 'initials']
+
+
+class Message(models.Model):
+
+    message_subject = models.CharField(max_length=150, verbose_name='Тема письма')
+    message_body = models.TextField(default='Это тестовое письмо, не отвечайте на него.', verbose_name='Тело письма')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец')
+
+    def __str__(self):
+        return f'\n\nАвтор письма: {self.owner.email}.\nТема письма: {self.message_subject}.'
+
+    class Meta:
+        verbose_name = 'Сообщение'
+        verbose_name_plural = 'Сообщения'
+        ordering = ['owner', 'message_subject']
