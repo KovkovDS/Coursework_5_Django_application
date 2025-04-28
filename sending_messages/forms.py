@@ -1,5 +1,5 @@
 from django import forms
-from .models import MailingRecipient
+from .models import MailingRecipient, Message
 from django.core.exceptions import ValidationError
 
 
@@ -10,10 +10,10 @@ class MailingRecipientForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        cleaned_article_pk = self.instance.pk
+        cleaned_recipient_pk = self.instance.pk
 
-        if MailingRecipient.objects.filter(email=email).exclude(id=cleaned_article_pk).exists():
-            raise ValidationError('Статья с таким названием уже существует.')
+        if MailingRecipient.objects.filter(email=email).exclude(id=cleaned_recipient_pk).exists():
+            raise ValidationError('Получатель с таким E-mail уже существует.')
         return email
 
     def __init__(self, *args, **kwargs):
@@ -24,3 +24,24 @@ class MailingRecipientForm(forms.ModelForm):
         self.fields['comment'].widget.attrs.update({'class': 'form-control', 'id': "exampleFormControlTextarea1",
                                                     'rows': "4", 'placeholder':
                                                         'Введите комментарий (описание) по данному клиенту'})
+
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['message_subject', 'message_body']
+
+    def clean_message_subject(self):
+        message_subject = self.cleaned_data.get('message_subject')
+        cleaned_message_pk = self.instance.pk
+
+        if Message.objects.filter(message_subject=message_subject).exclude(id=cleaned_message_pk).exists():
+            raise ValidationError('Статья с таким названием уже существует.')
+        return message_subject
+
+    def __init__(self, *args, **kwargs):
+        super(MessageForm, self).__init__(*args, **kwargs)
+        self.fields['message_subject'].widget.attrs.update({'class': 'form-control',
+                                                            'placeholder': 'Введите тему сообщения '})
+        self.fields['message_body'].widget.attrs.update({'class': 'form-control', 'id': "exampleFormControlTextarea1",
+                                                         'rows': "4", 'placeholder': 'Введите текст сообщения'})
