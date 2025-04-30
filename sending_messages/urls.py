@@ -4,6 +4,8 @@ from .views import (MailingRecipientListView, MailingRecipientDetailView, Mailin
                     AddedMailingRecipient, MailingRecipientUpdateView, MailingRecipientDeleteView,
                     MessageListView, MessageDetailView, MessageCreateView, AddedMessage, MessageUpdateView,
                     MessageDeleteView,
+                    MailingListView, MailingDetailView, MailingCreateView, AddedMailing,
+                    MailingUpdateView, MailingDeleteView,
                     )
 
 
@@ -22,4 +24,10 @@ urlpatterns = {
     path('message/<int:pk>/added/', AddedMessage.as_view(), name='added_message'),
     path('message/<int:pk>/edit/', MessageUpdateView.as_view(), name='editing_message'),
     path('message/<int:pk>/delete/', MessageDeleteView.as_view(), name='deleting_message'),
+    path('mailing-list/', MailingListView.as_view(), name='mailing-list'),
+    path('mailing/<int:pk>/', MailingDetailView.as_view(), name='mailing'),
+    path('mailing/new/', MailingCreateView.as_view(), name='adding_mailing'),
+    path('mailing/<int:pk>/added/', AddedMailing.as_view(), name='added_mailing'),
+    path('mailing/<int:pk>/edit/', MailingUpdateView.as_view(), name='editing_mailing'),
+    path('mailing/<int:pk>/delete/', MailingDeleteView.as_view(), name='deleting_mailing'),
 }

@@ -10,8 +10,8 @@
         <h2 class="card-header p-3 text-center">{{ object.initials }}</h2>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">Описание: {{object.comment}}</li>
-            {% if recipient.owner == user %}
-            <li class="list-group-item">Менеджер: {{recipient.owner.last_name}} {{recipient.owner.first_name}}</li>
+            {% if object.owner == user %}
+            <li class="list-group-item">Менеджер: {{object.owner.last_name}} {{object.owner.first_name}}</li>
             {% endif %}
         </ul>
         {% if product.owner == user %}
