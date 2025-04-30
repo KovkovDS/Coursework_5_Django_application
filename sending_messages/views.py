@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from sending_messages.forms import MailingRecipientForm, MessageForm, MailingForm
-from sending_messages.models import MailingRecipient, Message, Mailing
+from sending_messages.models import MailingRecipient, Message, Mailing, MailingAttempt
 
 
 class MailingRecipientListView(ListView):
@@ -136,3 +136,30 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     template_name = 'mailings_confirm_delete.html'
+
+
+class MailingListStatisticsView(TemplateView):
+    template_name = "mailing_list_statistics.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        mailings = Mailing.objects.filter(owner=user)
+        mailing_attempts = MailingAttempt.objects.filter(mailing__in=mailings)
+
+        successfully = 0
+        failed = 0
+        mailings_successful = 0
+
+        for attempt in mailing_attempts:
+            if attempt.status == "SUCCESSFULLY":
+                successfully += 1
+                mailings_successful += attempt.mailing.recipients.count()
+            if attempt.status == "NOT SUCCESSFUL":
+                failed += 1
+
+        context["successful"] = successfully
+        context["failed"] = failed
+        context["mailings_successful"] = mailings_successful
+        context["mailing_attempts"] = mailing_attempts.count()
+        return context
