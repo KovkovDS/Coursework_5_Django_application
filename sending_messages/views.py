@@ -1,4 +1,4 @@
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -44,10 +44,14 @@ class MailingRecipientUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MailingRecipientForm
     template_name = 'editing_recipient.html'
 
+    def get_success_url(self, **kwargs):
+        return reverse('sending_messages:recipient', args=[self.kwargs.get('pk')])
+
 
 class MailingRecipientDeleteView(LoginRequiredMixin, DeleteView):
     model = MailingRecipient
     template_name = 'recipients_confirm_delete.html'
+    success_url = reverse_lazy('sending_messages:recipients')
 
 
 class MessageListView(ListView):
@@ -88,10 +92,14 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MessageForm
     template_name = 'editing_message.html'
 
+    def get_success_url(self, **kwargs):
+        return reverse('sending_messages:message', args=[self.kwargs.get('pk')])
+
 
 class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     template_name = 'messages_confirm_delete.html'
+    success_url = reverse_lazy('sending_messages:messages')
 
 
 class MailingListView(ListView):
@@ -132,10 +140,14 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MailingForm
     template_name = 'editing_mailing.html'
 
+    def get_success_url(self, **kwargs):
+        return reverse('sending_messages:mailing', args=[self.kwargs.get('pk')])
+
 
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     template_name = 'mailings_confirm_delete.html'
+    success_url = reverse_lazy('sending_messages:mailing-list')
 
 
 class MailingListStatisticsView(TemplateView):
@@ -163,3 +175,16 @@ class MailingListStatisticsView(TemplateView):
         context["mailings_successful"] = mailings_successful
         context["mailing_attempts"] = mailing_attempts.count()
         return context
+
+
+class HomePageView(TemplateView):
+    template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["count_mailing"] = len(Mailing.objects.all())
+        active_mailings_count = Mailing.objects.filter(status="Запущена").count()
+        context_data["active_mailings_count"] = active_mailings_count
+        unique_clients_count = MailingRecipient.objects.distinct().count()
+        context_data["unique_clients_count"] = unique_clients_count
+        return context_data

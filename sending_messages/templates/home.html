@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<p class="lead pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">KODI CRM<br>
+    С нами, Вы выстроите идеальные отношения с вашими клиентами! :) <br>
+<div class="row">
+    <div class="col-6">
+       <ul class="list-group px-3 py-3 pt-md-5 pb-md-4 mx-auto ml-auto">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'sending_messages:mailing-list' %}">Создано рассылок: </a>
+                <span class="badge bg-dark rounded-pill">{{ count_mailing }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'sending_messages:mailing-list' %}">Количество активных рассылок: </a>
+                <span class="badge bg-dark rounded-pill">{{ active_mailings_count }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'sending_messages:recipients' %}">Количество уникальных получателей: </a>
+                <span class="badge bg-dark rounded-pill">{{ unique_recipients_count }}</span>
+            </li>
+       </ul>
+    </div>
+</div>
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:statistic' %}?next={{ request.get_full_path }}" role="button">Статистика Ваших рассылок</a>
+</div>
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:adding_mailing' %}?next={{ request.get_full_path }}" role="button">Добавить рассылку</a>
+</div>
+
+{% endblock %}
