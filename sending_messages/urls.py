@@ -5,13 +5,13 @@ from .views import (MailingRecipientListView, MailingRecipientDetailView, Mailin
                     MessageListView, MessageDetailView, MessageCreateView, AddedMessage, MessageUpdateView,
                     MessageDeleteView,
                     MailingListView, MailingDetailView, MailingCreateView, AddedMailing,
-                    MailingUpdateView, MailingDeleteView,
+                    MailingUpdateView, MailingDeleteView, MailingListStatisticsView, HomePageView,
                     )
 
 
 app_name = SendingMessagesConfig.name
 
-urlpatterns = {
+urlpatterns = [
     path('recipients/', MailingRecipientListView.as_view(), name='recipients'),
     path('recipient/<int:pk>/', MailingRecipientDetailView.as_view(), name='recipient'),
     path('recipient/new/', MailingRecipientCreateView.as_view(), name='adding_recipient'),
@@ -30,4 +30,6 @@ urlpatterns = {
     path('mailing/<int:pk>/added/', AddedMailing.as_view(), name='added_mailing'),
     path('mailing/<int:pk>/edit/', MailingUpdateView.as_view(), name='editing_mailing'),
     path('mailing/<int:pk>/delete/', MailingDeleteView.as_view(), name='deleting_mailing'),
-}
+    path('statistic/', MailingListStatisticsView.as_view(), name='statistic'),
+    path('', HomePageView.as_view(), name='home'),
+]
