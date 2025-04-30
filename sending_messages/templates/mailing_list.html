@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Список рассылок{% endblock %}
+
+{% block content %}
+<p class="lead pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">Список Ваших рассылок<br>
+    </p>
+<div class="row">
+    {% for mailing in mailing_list %}
+    <div class="col-6">
+        <div class="card text-bg-light">
+            <h4 class="card-header p-3 text-center">Рассылка сообщения {{mailing.message.message_subject}}</h4>
+              <div class="card-body">
+                  <div class="mb-3">
+                    <p class="card-text text-center">
+                      {{mailing.status}}
+                    </p>
+                  </div>
+                  <div class="row">
+                      <div class="col-9">
+                          <a class="btn btn-link mb-1" href="{% url 'sending_messages:mailing' message.pk %}?next={{ request.get_full_path }}" role="button">Подробнее...>></a>
+                      </div>
+                  </div>
+              </div>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:adding_mailing' %}?next={{ request.get_full_path }}" role="button">Добавить рассылку</a>
+</div>
+{% endblock %}

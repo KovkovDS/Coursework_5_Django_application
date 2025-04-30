@@ -2,6 +2,8 @@ from django import forms
 from .models import MailingRecipient, Message
 from django.core.exceptions import ValidationError
 
+from .models_full import Mailing
+
 
 class MailingRecipientForm(forms.ModelForm):
     class Meta:
@@ -45,3 +47,17 @@ class MessageForm(forms.ModelForm):
                                                             'placeholder': 'Введите тему сообщения '})
         self.fields['message_body'].widget.attrs.update({'class': 'form-control', 'id': "exampleFormControlTextarea1",
                                                          'rows': "4", 'placeholder': 'Введите текст сообщения'})
+
+
+class MailingForm(forms.ModelForm):
+    class Meta:
+        model = Mailing
+        fields = ['first_sending', 'end_sending', 'status', 'message', 'recipient']
+
+    def __init__(self, *args, **kwargs):
+        super(MailingForm, self).__init__(*args, **kwargs)
+        self.fields['status'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Введите Ф.И.О. клиента'})
+        self.fields['message'].widget.attrs.update({'class': 'form-select form-select-sm',
+                                                    'aria-label': 'Small select example'})
+        self.fields['recipient'].widget.attrs.update({'class': 'form-select form-select-sm',
+                                                     'aria-label': 'Small select example'})

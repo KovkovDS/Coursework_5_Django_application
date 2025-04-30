@@ -32,3 +32,37 @@ class Message(models.Model):
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
         ordering = ['owner', 'message_subject']
+
+
+class Mailing(models.Model):
+
+    STATUS_CHOICES = [
+        (
+            "COMPLETED",
+            "Завершена",
+        ),
+        (
+            "CREATED",
+            "Создана",
+        ),
+        (
+            "LAUNCHED",
+            "Запущена",
+        ),
+    ]
+    first_sending = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время первой отправки')
+    end_sending = models.DateTimeField(auto_now=True, verbose_name='Дата и время окончания отправки')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, verbose_name='Статус')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение')
+    recipient = models.ManyToManyField(MailingRecipient, verbose_name='Получатель рассылки')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец')
+
+    def __str__(self):
+        return f'\n\nАвтор рассылки: {self.owner.email}.\nОтправка начата: {self.first_sending}.' \
+               f'\nОтправка закончена: {self.end_sending}.\nСтатус рассылки: {self.status}.' \
+               f'\nСообщение для рассылки: {self.message}.\nСписок получателей: {self.recipient}.'
+
+    class Meta:
+        verbose_name = 'Получатель рассылки'
+        verbose_name_plural = 'Получатели рассылки'
+        ordering = ['owner', 'first_sending', 'end_sending', 'status', 'message']

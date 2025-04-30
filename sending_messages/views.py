@@ -2,8 +2,8 @@ from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from sending_messages.forms import MailingRecipientForm, MessageForm
-from sending_messages.models import MailingRecipient, Message
+from sending_messages.forms import MailingRecipientForm, MessageForm, MailingForm
+from sending_messages.models import MailingRecipient, Message, Mailing
 
 
 class MailingRecipientListView(ListView):
@@ -16,7 +16,6 @@ class MailingRecipientListView(ListView):
 class MailingRecipientDetailView(LoginRequiredMixin, DetailView):
     model = MailingRecipient
     template_name = 'recipient.html'
-    context_object_name = 'recipient'
 
 
 class MailingRecipientCreateView(LoginRequiredMixin, CreateView):
@@ -61,7 +60,6 @@ class MessageListView(ListView):
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     template_name = 'message.html'
-    context_object_name = 'message'
 
 
 class MessageCreateView(LoginRequiredMixin, CreateView):
@@ -94,3 +92,47 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
 class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     template_name = 'messages_confirm_delete.html'
+
+
+class MailingListView(ListView):
+    paginate_by = 4
+    model = Mailing
+    template_name = 'mailing_list.html'
+    context_object_name = 'mailing_list'
+
+
+class MailingDetailView(LoginRequiredMixin, DetailView):
+    model = Mailing
+    template_name = 'mailing.html'
+
+
+class MailingCreateView(LoginRequiredMixin, CreateView):
+    model = Mailing
+    form_class = MailingForm
+    template_name = 'adding_mailing.html'
+
+    def get_success_url(self, **kwargs):
+        return reverse('sending_messages:added_mailing', args=[self.object.id], kwargs=self.kwargs)
+
+
+class AddedMailing(LoginRequiredMixin, TemplateView):
+    model = Mailing
+    template_name = 'added_mailing.html'
+    context_object_name = 'added_mailing'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        added_mailing = Mailing.objects.get(pk=kwargs['pk'])
+        context['object'] = added_mailing
+        return context
+
+
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
+    model = Mailing
+    form_class = MailingForm
+    template_name = 'editing_mailing.html'
+
+
+class MailingDeleteView(LoginRequiredMixin, DeleteView):
+    model = Mailing
+    template_name = 'mailings_confirm_delete.html'
