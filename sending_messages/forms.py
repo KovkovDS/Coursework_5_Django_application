@@ -31,14 +31,6 @@ class MessageForm(forms.ModelForm):
         model = Message
         fields = ['message_subject', 'message_body']
 
-    def clean_message_subject(self):
-        message_subject = self.cleaned_data.get('message_subject')
-        cleaned_message_pk = self.instance.pk
-
-        if Message.objects.filter(message_subject=message_subject).exclude(id=cleaned_message_pk).exists():
-            raise ValidationError('Статья с таким названием уже существует.')
-        return message_subject
-
     def __init__(self, *args, **kwargs):
         super(MessageForm, self).__init__(*args, **kwargs)
         self.fields['message_subject'].widget.attrs.update({'class': 'form-control',

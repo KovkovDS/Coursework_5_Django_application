@@ -24,7 +24,7 @@
 </div>
 {% if user.is_authenticated %}
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:statistic' %}?next={{ request.get_full_path }}" role="button">Статистика Ваших рассылок</a>
+    <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:mailing-attempts' %}?next={{ request.get_full_path }}" role="button">Статистика Ваших рассылок</a>
 </div>
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:adding_mailing' %}?next={{ request.get_full_path }}" role="button">Добавить рассылку</a>

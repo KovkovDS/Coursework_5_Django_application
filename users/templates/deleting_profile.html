@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Удалить получателя рассылки</h2>
-<p>Вы уверены, что хотите удалить пользователя "{{recipient.initials}}"?</p>
+<p>Вы уверены, что хотите удалить пользователя {{user.last_name}} {{user.first_name}}?</p>
 <form method="post">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">Удалить</button>

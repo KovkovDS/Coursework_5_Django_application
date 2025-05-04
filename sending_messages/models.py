@@ -9,6 +9,7 @@ class MailingRecipient(models.Model):
     initials = models.CharField(max_length=150, blank=True, null=True, verbose_name='Ф. И. О.')
     comment = models.TextField(default='Здесь пока ничего нет.', blank=True, null=True, verbose_name='Комментарий')
     owner = models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True, verbose_name='Владелец')
+    is_active = models.BooleanField(default=True, verbose_name="Действующий")
 
     def __str__(self):
         """Метод для описания человеко читаемого вида модели "Получатель рассылки"."""
@@ -20,6 +21,9 @@ class MailingRecipient(models.Model):
         verbose_name = 'Получатель рассылки'
         verbose_name_plural = 'Получатели рассылки'
         ordering = ['owner', 'email', 'initials']
+        permissions = [
+            ("can_block_recipient", "Заблокировать/разблокировать получателя рассылки"),
+        ]
 
 
 class Message(models.Model):
@@ -37,6 +41,9 @@ class Message(models.Model):
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
         ordering = ['owner', 'message_subject']
+        permissions = [
+            ("can_block_message", "Заблокировать/разблокировать сообщение"),
+        ]
 
 
 class Mailing(models.Model):
@@ -52,6 +59,7 @@ class Mailing(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE,  null=True, blank=True, verbose_name='Сообщение')
     recipients = models.ManyToManyField(MailingRecipient, verbose_name='Получатели рассылки')
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Владелец')
+    is_active = models.BooleanField(default=True, verbose_name="Активна")
 
     def __str__(self):
         """Метод для описания человеко читаемого вида модели "Рассылка"."""
@@ -64,6 +72,9 @@ class Mailing(models.Model):
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
         ordering = ['owner', 'first_sending', 'end_sending', 'status', 'message']
+        permissions = [
+            ("can_block_mailing", "Заблокировать/разблокировать рассылку"),
+        ]
 
 
 class MailingAttempt(models.Model):

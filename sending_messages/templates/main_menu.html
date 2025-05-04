@@ -4,13 +4,17 @@
         <div class="btn-group ">
             <a class="btn btn-outline-primary p-2" href="{% url 'sending_messages:home' %}">Главная
             </a>
-        </div>
-        {% if user.is_authenticated %}
-        <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:recipients' %}">Клиенты</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:mailings' %}">Рассылки</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:messages' %}">Сообщения</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:mailing-attempts' %}">Попытки рассылки</a>
-        {% endif %}
+            {% if user.is_authenticated %}
+            <button class="btn btn-outline-primary dropdown-toggle-split dropdown-toggle p-2" data-bs-toggle="dropdown" aria-expanded="false">
+            Разделы
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+                <li><a class="dropdown-item" href="{% url 'sending_messages:recipients' %}">Клиенты</a></li>
+                <li><a class="dropdown-item" href="{% url 'sending_messages:mailings' %}">Рассылки</a></li>
+                <li><a class="dropdown-item" href="{% url 'sending_messages:messages' %}">Сообщения</a></li>
+                <li><a class="dropdown-item" href="{% url 'sending_messages:mailing-attempts' %}">Попытки рассылки</a></li>
+            </ul>
+            {% endif %}
     </nav>
 {% if user.is_authenticated %}
 <div>
@@ -23,8 +27,20 @@
                 {% csrf_token %}
                 <button type="submit" class="p-2 btn btn-outline-primary">Выйти
                 </button>
-                 <a class="p-2 btn btn-outline-primary" href="{% url 'users:profile' user.pk %}?next={{ request.get_full_path }}">Профиль</a>
             </form>
+            {% if user.is_superuser or "users.view_user" in perms %}
+            <div class="btn-group ">
+                <button class="btn btn-outline-primary dropdown-toggle-split dropdown-toggle p-2" data-bs-toggle="dropdown" aria-expanded="false">
+                Администрирование
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="{% url 'users:profile' user.pk %}?next={{ request.get_full_path }}">Профиль</a></li>
+                    <li><a class="dropdown-item" href="{% url 'users:users' %}?next={{ request.get_full_path }}">Пользователи</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:profile' user.pk %}?next={{ request.get_full_path }}">Профиль</a>
+            {% endif %}
         {% else %}
             <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}?next={{ request.get_full_path }}">Войти</a>
             <a class="p-2 btn btn-outline-primary" href="{% url 'users:registration' %}?next={{ request.get_full_path }}">Регистрация</a>
