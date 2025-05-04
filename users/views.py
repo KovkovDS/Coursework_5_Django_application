@@ -1,6 +1,6 @@
 import secrets
-from django.views.generic import ListView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView, PasswordResetConfirmView, PasswordResetView
@@ -8,13 +8,15 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from crm.settings import EMAIL_HOST_USER
 from .models import User
 from crm import settings
-from .forms import UserRegistrationForm, UserAuthorizationForm, ProfilePasswordRecoveryForm, ProfilePasswordResetForm, \
-    ProfileChangingPasswordForm
+from .forms import UserRegistrationForm, UserAuthorizationForm, ProfilePasswordRecoveryForm, \
+    ProfilePasswordResetForm, ProfileChangingPasswordForm
 
 
 class RegistrationView(FormView):
@@ -32,8 +34,8 @@ class RegistrationView(FormView):
         url_for_confirm = f'http://{host}/profile/email-confirm/{token}'
         send_mail(
             subject=f'Добро пожаловать в наш сервис. Подтвердите вашу электронную почту.',
-            message=f'Здравствуйте {user.last_name} {user.first_name}! Для активации вашей учетной записи пройдите по '
-                    f'ссылке {url_for_confirm} .',
+            message=f'Здравствуйте {user.last_name} {user.first_name}! '
+                    f'Для активации вашей учетной записи пройдите по ссылке {url_for_confirm}.',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[user.email],
         )
@@ -46,6 +48,7 @@ class AuthorizationView(LoginView):
     success_url = reverse_lazy('sending_messages:home')
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProfileView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'profile.html'
@@ -65,6 +68,7 @@ class ProfileDeletingView(DeleteView):
     success_url = reverse_lazy('users:profiles')
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProfilesListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'users.html'

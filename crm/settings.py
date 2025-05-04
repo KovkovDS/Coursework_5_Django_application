@@ -137,6 +137,7 @@ MEDIA_ROOT = [BASE_DIR, 'media']
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
@@ -149,3 +150,14 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 AUTH_USER_MODEL = 'users.User'
 
 LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = "crm/"
+LOGOUT_REDIRECT_URL = 'crm/'
+
+CACHE_ENABLED = True
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv("SERVER_REDIS"),
+        }
+    }

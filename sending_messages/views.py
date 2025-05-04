@@ -1,14 +1,15 @@
 from django.urls import reverse, reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from sending_messages.forms import MailingRecipientForm, MessageForm, MailingForm
 from sending_messages.models import MailingRecipient, Message, Mailing, MailingAttempt
-# from .services import get_attempt_from_cache, get_mailing_from_cache
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class MailingRecipientListView(ListView):
     paginate_by = 4
     model = MailingRecipient
@@ -23,6 +24,7 @@ class MailingRecipientListView(ListView):
         raise PermissionDenied
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class MailingRecipientDetailView(LoginRequiredMixin, DetailView):
     model = MailingRecipient
     template_name = 'recipient.html'
@@ -69,6 +71,7 @@ class MailingRecipientDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('sending_messages:recipients')
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class MessageListView(ListView):
     paginate_by = 4
     model = Message
@@ -130,6 +133,7 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('sending_messages:messages')
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class MailingListView(ListView):
     paginate_by = 4
     model = Mailing
@@ -241,33 +245,6 @@ class MailingAttemptsCreateView(LoginRequiredMixin, CreateView):
     template_name = 'adding_mailing_attempt.html'
     success_url = reverse_lazy('sending_messages:adding_mailing_attempt')
 
-
-# class MailingListStatisticsView(TemplateView):
-#     template_name = "mailing_list_statistics.html"
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         user = self.request.user
-#         mailings = Mailing.objects.filter(owner=user)
-#         mailing_attempts = MailingAttempt.objects.filter(mailing__in=mailings)
-#
-#         successfully = 0
-#         failed = 0
-#         mailings_successful = 0
-#
-#         for attempt in mailing_attempts:
-#             if attempt.status == "SUCCESSFULLY":
-#                 successfully += 1
-#                 mailings_successful += attempt.mailing.recipients.count()
-#             if attempt.status == "NOT SUCCESSFUL":
-#                 failed += 1
-#
-#         context["successful"] = successfully
-#         context["failed"] = failed
-#         context["mailings_successful"] = mailings_successful
-#         context["mailing_attempts"] = mailing_attempts.count()
-#         return context
-#
 
 class HomePageView(TemplateView):
     template_name = "home.html"
