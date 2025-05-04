@@ -13,7 +13,8 @@
             <li class="list-group-item">Статус: {{object.status}}</li>
             <li class="list-group-item">Тема рассылки: {{object.message.message_subject}}</li>
             <li class="list-group-item">Список получателей: {{object.recipient}}</li>
-            {% if object.owner == user %}
+            {% if object.owner == user or "sending_messages.can_block_mailing" in perms %}
+            <li class="list-group-item">Активна: {{object.is_active|yesno:"Да,Нет"}}</li>
             <li class="list-group-item">Менеджер: {{object.owner.last_name}} {{object.owner.first_name}}</li>
             {% endif %}
         </ul>

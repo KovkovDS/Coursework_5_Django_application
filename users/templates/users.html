@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Пользователи {% endblock %}
+
+{% block content %}
+<div class="container marketing mt-5">
+    <div class="container text-center mt-3">
+        <div class="row justify-content-center">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <h2>Пользователи</h2>
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="table-responsive small">
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
+                    <th>E-mail</th>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Группа доступа</th>
+                    <th>Активен</th>
+                    {% if user.is_superuser or "users.view_user" in perms %}
+                    <th>Действия</th>
+                    {% endif %}
+                </tr>
+                </thead>
+
+                {% for object in object_list %}
+                <tr>
+                    <td>{{ object.email }}</td>
+                    <td>{{ object.first_name }}</td>
+                    <td>{{ object.last_name}}</td>
+                    <td>{{ object.groups}}</td>
+                    {% if user.is_superuser or "users.view_user" in perms %}
+                    <td>
+                        {% if object.is_active %}
+                                <a type="button" class="btn btn-danger btn-sm"
+                                   href="{% url 'users:blocking_profile' object.pk %}">Заблокировать</a>
+                            {% else %}
+                                <a type="button" class="btn btn-success btn-sm"
+                                   href="{% url 'users:blocking_profile' object.pk %}">Разблокировать</a>
+                            {% endif %}
+                        {% else %}
+                        {{object.is_active|yesno:"Активный, Не активный"}}
+                    </td>
+                    {% endif %}
+                    {% if user.is_superuser %}
+                    <td>
+                        <a class="btn btn-primary btn-sm"
+                           href="{% url 'users:editing_profile' object.pk%}">Редактировать</a>
+                        <a class="btn btn-danger btn-sm"
+                           href="{% url 'users:deleting_profile' object.pk%}">Удалить</a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor%}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

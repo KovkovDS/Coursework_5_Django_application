@@ -39,19 +39,11 @@ class RegistrationView(FormView):
         )
         return super().form_valid(form)
 
-    # def get_success_url(self):
-    #     next = self.request.POST.get('next', '/')
-    #     return next
-
 
 class AuthorizationView(LoginView):
     form_class = UserAuthorizationForm
     template_name = 'login.html'
     success_url = reverse_lazy('sending_messages:home')
-
-    # def get_success_url(self):
-    #     next = self.request.POST.get('next', '/')
-    #     return next
 
 
 class ProfileView(LoginRequiredMixin, DetailView):
@@ -69,12 +61,16 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
 class ProfileDeletingView(DeleteView):
     model = User
+    template_name = 'deleting_profile.html'
     success_url = reverse_lazy('users:profiles')
 
 
 class ProfilesListView(LoginRequiredMixin, ListView):
     model = User
-    template_name = 'profiles_list.html'
+    template_name = 'users.html'
+
+    def test_func(self):
+        return self.request.user.groups.filter(name="Менеджеры").exists() or self.request.user.is_superuser
 
 
 class ProfilePasswordRecoveryView(FormView):
@@ -133,6 +129,7 @@ class ProfileChangingPasswordView(SuccessMessageMixin, PasswordResetConfirmView)
 def email_verification(request, token):
     user = get_object_or_404(User, token=token)
     user.is_active = True
+    user.groups.add(Group.objects.get(name='Пользователь'))
     user.save()
     subject = f'Добро пожаловать в наш сервис, {user.last_name} {user.first_name}.'
     message = f'Здравствуйте {user.last_name} {user.first_name}! Спасибо, что зарегистрировались в нашем сервисе!'

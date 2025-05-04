@@ -11,6 +11,7 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">Описание: {{object.comment}}</li>
             {% if object.owner == user %}
+            <li class="list-group-item">Действующий: {{object.is_active|yesno:"Да,Нет"}}</li>
             <li class="list-group-item">Менеджер: {{object.owner.last_name}} {{object.owner.first_name}}</li>
             {% endif %}
         </ul>

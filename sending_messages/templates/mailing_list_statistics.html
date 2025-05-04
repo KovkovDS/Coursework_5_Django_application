@@ -18,6 +18,26 @@
             <table class="table table-success table-striped">
                 <thead>
                 <tr>
+                    <th>Сообщений доставлено</th>
+                    <th>Сообщений не доставлено</th>
+                    <th>Количество отправленных рассылок</th>
+                    <th>Всего попыток</th>
+                </tr>
+                <tr>
+                    <td>{{ successful }}</td>
+                    <td>{{ failed }}</td>
+                    <td>{{ mailings_successful }}</td>
+                    <td>{{ mailing_attempts_count }}</td>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="table-responsive small">
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
                     <th>Тема сообщения</th>
                     <th>Описание рассылки</th>
                     <th>Дата</th>
@@ -43,28 +63,7 @@
                 </tr>
                 {% endfor%}
             </table>
-            <p></p>
-
         </div><!-- /.row -->
-        <p></p>
-        <div class="table-responsive small">
-            <table class="table table-success table-striped">
-                <thead>
-                <tr>
-                    <th>Сообщений доставлено</th>
-                    <th>Сообщений не доставлено</th>
-                    <th>Количество отправленных рассылок</th>
-                    <th>Всего попыток</th>
-                </tr>
-                <tr>
-                    <td>{{ successful }}</td>
-                    <td>{{ failed }}</td>
-                    <td>{{ mailings_successful }}</td>
-                    <td>{{ mailing_attempts }}</td>
-                </tr>
-                </thead>
-            </table>
-        </div>
     </div><!-- /.container -->
 </div>
 {% endblock %}
