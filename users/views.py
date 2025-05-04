@@ -1,3 +1,142 @@
-from django.shortcuts import render
+import secrets
+from django.views.generic import ListView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.models import Group
+from django.contrib.auth.views import LoginView, PasswordResetConfirmView, PasswordResetView
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy, reverse
+from django.views.generic import DetailView
+from django.views.generic.edit import FormView, UpdateView, DeleteView
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+from crm.settings import EMAIL_HOST_USER
+from .models import User
+from crm import settings
+from .forms import UserRegistrationForm, UserAuthorizationForm, ProfilePasswordRecoveryForm, ProfilePasswordResetForm, \
+    ProfileChangingPasswordForm
 
-# Create your views here.
+
+class RegistrationView(FormView):
+    template_name = 'registration.html'
+    form_class = UserRegistrationForm
+    success_url = reverse_lazy('sending_messages:home')
+
+    def form_valid(self, form):
+        user = form.save()
+        user.is_active = False
+        token = secrets.token_hex(32)
+        user.token = token
+        user.save()
+        host = self.request.get_host()
+        url_for_confirm = f'http://{host}/profile/email-confirm/{token}'
+        send_mail(
+            subject=f'Добро пожаловать в наш сервис. Подтвердите вашу электронную почту.',
+            message=f'Здравствуйте {user.last_name} {user.first_name}! Для активации вашей учетной записи пройдите по '
+                    f'ссылке {url_for_confirm} .',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email],
+        )
+        return super().form_valid(form)
+
+    # def get_success_url(self):
+    #     next = self.request.POST.get('next', '/')
+    #     return next
+
+
+class AuthorizationView(LoginView):
+    form_class = UserAuthorizationForm
+    template_name = 'login.html'
+    success_url = reverse_lazy('sending_messages:home')
+
+    # def get_success_url(self):
+    #     next = self.request.POST.get('next', '/')
+    #     return next
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'profile.html'
+    context_object_name = 'profile'
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserRegistrationForm
+    template_name = 'editing_profile.html'
+    success_url = reverse_lazy('users:profile')
+
+
+class ProfileDeletingView(DeleteView):
+    model = User
+    success_url = reverse_lazy('users:profiles')
+
+
+class ProfilesListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'profiles_list.html'
+
+
+class ProfilePasswordRecoveryView(FormView):
+    template_name = "password_recovery.html"
+    form_class = ProfilePasswordRecoveryForm
+    success_url = reverse_lazy("users:login")
+
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+        user = User.objects.get(email=email)
+        length = 12
+        alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        password = get_random_string(length, alphabet)
+        user.set_password(password)
+        user.save()
+        send_mail(
+            subject="Восстановление пароля",
+            message=f"Ваш новый пароль: {password}",
+            from_email=EMAIL_HOST_USER,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        return super().form_valid(form)
+
+
+class ProfilePasswordResetView(SuccessMessageMixin, PasswordResetView):
+    """Представление по сбросу пароля."""
+
+    form_class = ProfilePasswordResetForm
+    template_name = "users/password_reset.html"
+    success_url = reverse_lazy("users:login")
+    success_message = "Письмо с инструкцией по восстановлению пароля отправлено на ваш электронный адрес."
+    subject_template_name = "users/email/password_subject_reset_mail.txt"
+    email_template_name = "users/email/password_reset_mail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Запрос на восстановление пароля"
+        return context
+
+
+class ProfileChangingPasswordView(SuccessMessageMixin, PasswordResetConfirmView):
+    """Представление установки нового пароля."""
+
+    form_class = ProfileChangingPasswordForm
+    template_name = "changing_password.html"
+    success_url = reverse_lazy("users:login")
+    success_message = "Пароль успешно изменен. Можете авторизоваться на сайте."
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Установить новый пароль"
+        return context
+
+
+def email_verification(request, token):
+    user = get_object_or_404(User, token=token)
+    user.is_active = True
+    user.save()
+    subject = f'Добро пожаловать в наш сервис, {user.last_name} {user.first_name}.'
+    message = f'Здравствуйте {user.last_name} {user.first_name}! Спасибо, что зарегистрировались в нашем сервисе!'
+    from_email = settings.EMAIL_HOST_USER
+    recipient_list = [user.email]
+    send_mail(subject, message, from_email, recipient_list)
+    return redirect(reverse('catalog:home'))

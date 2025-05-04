@@ -50,12 +50,11 @@ class MessageForm(forms.ModelForm):
 class MailingForm(forms.ModelForm):
     class Meta:
         model = Mailing
-        fields = ['status', 'message', 'recipients']
+        fields = ['message', 'recipients']
 
     def __init__(self, *args, **kwargs):
         super(MailingForm, self).__init__(*args, **kwargs)
-        self.fields['status'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Введите Ф.И.О. клиента'})
         self.fields['message'].widget.attrs.update({'class': 'form-select form-select-sm',
                                                     'aria-label': 'Small select example'})
         self.fields['recipients'].widget.attrs.update({'class': 'form-select form-select-sm',
-                                                     'aria-label': 'Small select example'})
+                                                      'aria-label': 'Small select example'})

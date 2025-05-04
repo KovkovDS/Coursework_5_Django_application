@@ -5,13 +5,29 @@
             <a class="btn btn-outline-primary p-2" href="{% url 'sending_messages:home' %}">Главная
             </a>
         </div>
+        {% if user.is_authenticated %}
         <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:recipients' %}">Клиенты</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:mailing-list' %}">Рассылки</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:mailings' %}">Рассылки</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:messages' %}">Сообщения</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'sending_messages:mailing-attempts' %}">Попытки рассылки</a>
+        {% endif %}
     </nav>
 {% if user.is_authenticated %}
 <div>
 <p class="mt-4 mb-auto">Приветствую тебя, {{ user.last_name }} {{ user.first_name }}!</p>
 </div>
 {% endif %}
+    <nav class="p-2 me-auto">
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'users:logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="p-2 btn btn-outline-primary">Выйти
+                </button>
+                 <a class="p-2 btn btn-outline-primary" href="{% url 'users:profile' user.pk %}?next={{ request.get_full_path }}">Профиль</a>
+            </form>
+        {% else %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}?next={{ request.get_full_path }}">Войти</a>
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:registration' %}?next={{ request.get_full_path }}">Регистрация</a>
+        {% endif %}
+    </nav>
 </div>

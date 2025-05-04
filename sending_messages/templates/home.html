@@ -8,11 +8,11 @@
     <div class="col-6">
        <ul class="list-group px-3 py-3 pt-md-5 pb-md-4 mx-auto ml-auto">
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'sending_messages:mailing-list' %}">Создано рассылок: </a>
+                <a href="{% url 'sending_messages:mailings' %}">Создано рассылок: </a>
                 <span class="badge bg-dark rounded-pill">{{ count_mailing }}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'sending_messages:mailing-list' %}">Количество активных рассылок: </a>
+                <a href="{% url 'sending_messages:mailings' %}">Количество активных рассылок: </a>
                 <span class="badge bg-dark rounded-pill">{{ active_mailings_count }}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -22,11 +22,13 @@
        </ul>
     </div>
 </div>
+{% if user.is_authenticated %}
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:statistic' %}?next={{ request.get_full_path }}" role="button">Статистика Ваших рассылок</a>
 </div>
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:adding_mailing' %}?next={{ request.get_full_path }}" role="button">Добавить рассылку</a>
 </div>
+{% endif %}
 
 {% endblock %}
