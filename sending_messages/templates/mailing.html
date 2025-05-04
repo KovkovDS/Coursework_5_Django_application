@@ -24,6 +24,7 @@
         <a href="{% url 'sending_messages:deleting_mailing' object.pk %}?next={{ request.GET.next }}" class="btn btn-outline-danger m-2 text-center" role="button" style="max-width: 255px;">
             Удалить</a>
         {% endif %}
+        {% endif %}
     </div>
 </div>
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">

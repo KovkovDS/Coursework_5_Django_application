@@ -8,11 +8,11 @@ class MailingRecipient(models.Model):
     email = models.EmailField(unique=True, verbose_name='Адрес электронной почты (Login)')
     initials = models.CharField(max_length=150, blank=True, null=True, verbose_name='Ф. И. О.')
     comment = models.TextField(default='Здесь пока ничего нет.', blank=True, null=True, verbose_name='Комментарий')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец')
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True, verbose_name='Владелец')
 
     def __str__(self):
         """Метод для описания человеко читаемого вида модели "Получатель рассылки"."""
-        return f'\n\nМенеджер клиента: {self.owner.email}.\nФ. И. О. клиента: {self.initials}.' \
+        return f'\n\nМенеджер клиента: {self.owner}.\nФ. И. О. клиента: {self.initials}.' \
                f'\nАдрес электронной почты (Login): {self.email}.'
 
     class Meta:
@@ -26,11 +26,11 @@ class Message(models.Model):
     """Сообщение."""
     message_subject = models.CharField(max_length=150, verbose_name='Тема письма')
     message_body = models.TextField(default='Это тестовое письмо, не отвечайте на него.', verbose_name='Тело письма')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец')
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True, verbose_name='Владелец')
 
     def __str__(self):
         """Метод для описания человеко читаемого вида модели "Сообщение"."""
-        return f'\n\nАвтор письма: {self.owner.email}.\nТема письма: {self.message_subject}.'
+        return f'\n\nАвтор письма: {self.owner}.\nТема письма: {self.message_subject}.'
 
     class Meta:
         """Класс для изменения поведения полей модели "Сообщение"."""
@@ -41,30 +41,21 @@ class Message(models.Model):
 
 class Mailing(models.Model):
     """Рассылка."""
-    STATUS_CHOICES = [
-        (
-            "COMPLETED",
-            "Завершена",
-        ),
-        (
-            "CREATED",
-            "Создана",
-        ),
-        (
-            "LAUNCHED",
-            "Запущена",
-        ),
-    ]
+    STATUS_CHOICES = {
+            "COMPLETED": "Завершена",
+            "CREATED": "Создана",
+            "LAUNCHED": "Запущена"
+    }
     first_sending = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время первой отправки')
     end_sending = models.DateTimeField(auto_now=True, verbose_name='Дата и время окончания отправки')
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, verbose_name='Статус')
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="Создана", verbose_name='Статус')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE,  null=True, blank=True, verbose_name='Сообщение')
     recipients = models.ManyToManyField(MailingRecipient, verbose_name='Получатели рассылки')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец')
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Владелец')
 
     def __str__(self):
         """Метод для описания человеко читаемого вида модели "Рассылка"."""
-        return f'\n\nАвтор рассылки: {self.owner.email}.\nОтправка начата: {self.first_sending}.' \
+        return f'\n\nАвтор рассылки: {self.owner}.\nОтправка начата: {self.first_sending}.' \
                f'\nОтправка закончена: {self.end_sending}.\nСтатус рассылки: {self.status}.' \
                f'\nСообщение для рассылки: {self.message}.\nСписок получателей: {self.recipients}.'
 
@@ -77,24 +68,18 @@ class Mailing(models.Model):
 
 class MailingAttempt(models.Model):
     """Попытка рассылки."""
-    STATUS_CHOICES = [
-        (
-            "SUCCESSFULLY",
-            "Успешно",
-        ),
-        (
-            "NOT SUCCESSFUL",
-            "Не успешно",
-        ),
-    ]
+    STATUS_CHOICES = {
+            "SUCCESSFULLY": "Успешно",
+            "NOT SUCCESSFUL": "Не успешно"
+            }
     create_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время попытки')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, verbose_name='Статус')
     server_response = models.TextField(null=True, blank=True, verbose_name='Ответ почтового сервера')
-    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='Рассылка')
+    mailing = models.ForeignKey(Mailing, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Рассылка')
 
     def __str__(self):
         """Метод для описания человеко читаемого вида модели "Попытка рассылки"."""
-        return f'\n\nАвтор рассылки: {self.malling.owner.email}.\nПопытка начата: {self.create_at}.' \
+        return f'\n\nАвтор рассылки: {self.mailing}.\nПопытка начата: {self.create_at}.' \
                f'\nСтатус попытки: {self.status}.\nОтвет почтового сервера: {self.server_response}.'
 
     class Meta:

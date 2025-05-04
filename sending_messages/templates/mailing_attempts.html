@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Статистика по рассылкам{% endblock %}
+
+{% block content %}
+<main class="flex-shrink-0">
+  <div class="container">
+    <h1 class="mt-5">Управление сообщениями</h1>
+    <p class="lead">Вы можете добавлять, просматривать, редактировать и удалять сообщения</p>
+    <div class="container">
+    {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="btn btn-dark" href="{% url 'sending_messages:adding_message' %}" role="button">Создать сообщение</a>
+      </li>
+    {% endif %}
+    </div>
+    <div class="row">
+        <div class="table-responsive small">
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
+                    <th>Тема сообщения</th>
+                    <th>Отправлено</th>
+                    <th>Статус</th>
+                    <th>Ответ сервера</th>
+                    <th>ID рассылки</th>
+                    {% if user.is_superuser %}
+                    <th>Создал рассылку</th>
+                    {% endif %}
+                </tr>
+                </thead>
+
+                {% for mailing_attempt in mailing_attempts %}
+                <tr>
+                    <td>{{ mailing_attempt.create_at }}</td>
+                    <td>{{ mailing_attempt.status }}</td>
+                    <td>{{ mailing_attempt.server_response }}</td>
+                    <td>{{ mailing_attempt.mailing }}</td>
+                </tr>
+                {% endfor%}
+            </table>
+        </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

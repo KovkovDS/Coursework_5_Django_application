@@ -105,8 +105,8 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
 class MailingListView(ListView):
     paginate_by = 4
     model = Mailing
-    template_name = 'mailing_list.html'
-    context_object_name = 'mailing_list'
+    template_name = 'mailings.html'
+    context_object_name = 'mailings'
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
@@ -147,7 +147,19 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     template_name = 'mailings_confirm_delete.html'
-    success_url = reverse_lazy('sending_messages:mailing-list')
+    success_url = reverse_lazy('sending_messages:mailings')
+
+
+class MailingAttemptsListView(LoginRequiredMixin, ListView):
+    model = MailingAttempt
+    template_name = 'mailing_attempts.html'
+    context_object_name = 'mailing_attempts'
+
+
+class MailingAttemptsCreateView(LoginRequiredMixin, CreateView):
+    model = MailingAttempt
+    template_name = 'adding_mailing_attempt.html'
+    success_url = reverse_lazy('sending_messages:adding_mailing_attempt')
 
 
 class MailingListStatisticsView(TemplateView):

@@ -1,11 +1,13 @@
 from django.urls import path
 from sending_messages.apps import SendingMessagesConfig
+from .services import run_mailing, block_mailing
 from .views import (MailingRecipientListView, MailingRecipientDetailView, MailingRecipientCreateView,
                     AddedMailingRecipient, MailingRecipientUpdateView, MailingRecipientDeleteView,
                     MessageListView, MessageDetailView, MessageCreateView, AddedMessage, MessageUpdateView,
                     MessageDeleteView,
                     MailingListView, MailingDetailView, MailingCreateView, AddedMailing,
                     MailingUpdateView, MailingDeleteView, MailingListStatisticsView, HomePageView,
+                    MailingAttemptsListView, MailingAttemptsCreateView
                     )
 
 
@@ -24,12 +26,16 @@ urlpatterns = [
     path('message/<int:pk>/added/', AddedMessage.as_view(), name='added_message'),
     path('message/<int:pk>/edit/', MessageUpdateView.as_view(), name='editing_message'),
     path('message/<int:pk>/delete/', MessageDeleteView.as_view(), name='deleting_message'),
-    path('mailing-list/', MailingListView.as_view(), name='mailing-list'),
+    path('mailings/', MailingListView.as_view(), name='mailings'),
     path('mailing/<int:pk>/', MailingDetailView.as_view(), name='mailing'),
     path('mailing/new/', MailingCreateView.as_view(), name='adding_mailing'),
     path('mailing/<int:pk>/added/', AddedMailing.as_view(), name='added_mailing'),
     path('mailing/<int:pk>/edit/', MailingUpdateView.as_view(), name='editing_mailing'),
     path('mailing/<int:pk>/delete/', MailingDeleteView.as_view(), name='deleting_mailing'),
+    path('mailing-attempts/', MailingAttemptsListView.as_view(), name='mailing-attempts'),
+    path('mailing/<int:pk>/edit/', MailingAttemptsCreateView.as_view(), name='adding_mailing_attempt'),
+    path('mailing/<int:pk>/run/', run_mailing, name='run_mailing'),
+    path('mailing/<int:pk>/block/', block_mailing, name='block_mailing'),
     path('statistic/', MailingListStatisticsView.as_view(), name='statistic'),
     path('', HomePageView.as_view(), name='home'),
 ]
