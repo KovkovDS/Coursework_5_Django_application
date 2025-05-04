@@ -1,9 +1,10 @@
 import requests as requests
+from django.core.cache import cache
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-
+from crm.settings import CACHE_ENABLED
 from crm.settings import EMAIL_HOST_USER
 from sending_messages.models import Mailing, MailingAttempt
 
@@ -52,3 +53,29 @@ def block_mailing(request, pk):
     mailing.is_active = {mailing.is_active: False, not mailing.is_active: True}[True]
     mailing.save()
     return redirect("sending_messages:mailings")
+
+
+def get_mailing_from_cache():
+    """Получение данных по рассылкам из кэша, если кэш пуст берем из БД."""
+    if not CACHE_ENABLED:
+        return Mailing.objects.all()
+    key = "mailing_list"
+    cache_data = cache.get(key)
+    if cache_data is not None:
+        return cache_data
+    cache_data = Mailing.objects.all()
+    cache.set(key, cache_data)
+    return cache_data
+
+
+def get_attempt_from_cache():
+    """Получение данных по попыткам из кэша, если кэш пуст берем из БД."""
+    if not CACHE_ENABLED:
+        return MailingAttempt.objects.all()
+    key = "attempt_list"
+    cache_data = cache.get(key)
+    if cache_data is not None:
+        return cache_data
+    cache_data = MailingAttempt.objects.all()
+    cache.set(key, cache_data)
+    return cache_data

@@ -36,6 +36,5 @@ urlpatterns = [
     path('mailing/<int:pk>/edit/', MailingAttemptsCreateView.as_view(), name='adding_mailing_attempt'),
     path('mailing/<int:pk>/run/', run_mailing, name='run_mailing'),
     path('mailing/<int:pk>/block/', block_mailing, name='block_mailing'),
-    # path('statistic/', MailingListStatisticsView.as_view(), name='statistic'),
     path('', HomePageView.as_view(), name='home'),
 ]
