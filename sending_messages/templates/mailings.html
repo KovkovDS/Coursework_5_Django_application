@@ -5,16 +5,13 @@
 <div class="container marketing mt-5">
     <div class="container text-center mt-3">
         <div class="row justify-content-center">
-            <div class="col-4"></div>
-            <div class="col-4">
+            <div class="col-4 mb-2">
                 <h2>Рассылки</h2>
-                {% if sending_messages.add_mailing %}
+                {% if perms.sending_messages.add_mailing %}
                     <a class="btn btn-success mt-3" href="{% url 'sending_messages:adding_mailing' %}">Создать рассылку &raquo;</a>
                 {% endif %}
             </div>
-            <div class="col-4"></div>
         </div>
-
     </div>
     <div class="row">
         <div class="table-responsive small">

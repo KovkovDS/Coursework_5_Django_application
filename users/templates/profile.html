@@ -20,9 +20,9 @@
             <li class="list-group-item">Дата последнего изменения: {{object.updated_at|date:"d M Y"}}</li>
         </ul>
         {% if object == user or user.is_superuser %}
-        <a href="{% url 'user:editing_profile' user.pk %}?next={{ request.get_full_path }}" class="btn btn-outline-primary m-2 text-center" role="button" style="max-width: 255px;">
+        <a href="{% url 'users:editing_profile' user.pk %}?next={{ request.get_full_path }}" class="btn btn-outline-primary m-2 text-center" role="button" style="max-width: 255px;">
             Редактировать</a>
-        <a href="{% url 'user:deleting_profile' user.pk %}?next={{ request.get_full_path }}" class="btn btn-outline-primary m-2 text-center" role="button" style="max-width: 255px;">
+        <a href="{% url 'users:deleting_profile' user.pk %}?next={{ request.get_full_path }}" class="btn btn-outline-primary m-2 text-center" role="button" style="max-width: 255px;">
             Удалить</a>
         {% endif %}
     </div>
