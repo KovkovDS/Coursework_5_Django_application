@@ -5,7 +5,7 @@ from users.models import User
 
 class MailingRecipient(models.Model):
     """Получатель рассылки."""
-    email = models.EmailField(unique=True, verbose_name='Адрес электронной почты (Login)')
+    email = models.EmailField(verbose_name='Адрес электронной почты (Login)')
     initials = models.CharField(max_length=150, blank=True, null=True, verbose_name='Ф. И. О.')
     comment = models.TextField(default='Здесь пока ничего нет.', blank=True, null=True, verbose_name='Комментарий')
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Владелец')
