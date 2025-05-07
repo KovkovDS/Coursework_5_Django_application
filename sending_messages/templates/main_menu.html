@@ -29,7 +29,7 @@
                 <button type="submit" class="p-2 btn btn-outline-primary">Выйти
                 </button>
             </form>
-            {% if user.is_superuser or users.can_block_user in perm %}
+            {% if user.is_superuser or perms.users.can_block_user %}
             <div class="btn-group ">
                 <button class="btn btn-outline-primary dropdown-toggle-split dropdown-toggle p-2" data-bs-toggle="dropdown" aria-expanded="false">
                 Администрирование

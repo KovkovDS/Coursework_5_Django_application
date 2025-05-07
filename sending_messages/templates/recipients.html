@@ -25,7 +25,7 @@
     </div>
     {% endfor %}
     </div>
-{% if sending_messages.add_mailingrecipient %}
+{% if user.is_superuser or perms.sending_messages.add_mailingrecipient %}
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:adding_recipient' %}?next={{ request.get_full_path }}" role="button">Добавить получателя</a>
 </div>

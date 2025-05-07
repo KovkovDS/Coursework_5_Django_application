@@ -25,7 +25,7 @@
     </div>
     {% endfor %}
     </div>
-{% if user.add_message in perm %}
+{% if perms.users.add_message or user.is_superuser  %}
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <a class="btn btn-outline-primary mt-4" href="{% url 'sending_messages:adding_message' %}?next={{ request.get_full_path }}" role="button">Добавить сообщение</a>
 </div>

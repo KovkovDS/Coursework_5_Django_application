@@ -9,8 +9,8 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
 
-@method_decorator(cache_page(60 * 15), name='dispatch')
-class MailingRecipientListView(ListView):
+@method_decorator(cache_page(60 * 1), name='dispatch')
+class MailingRecipientListView(LoginRequiredMixin, ListView):
     paginate_by = 4
     model = MailingRecipient
     template_name = 'recipients.html'
@@ -24,7 +24,7 @@ class MailingRecipientListView(ListView):
         raise PermissionDenied
 
 
-@method_decorator(cache_page(60 * 15), name='dispatch')
+@method_decorator(cache_page(60 * 1), name='dispatch')
 class MailingRecipientDetailView(LoginRequiredMixin, DetailView):
     model = MailingRecipient
     template_name = 'recipient.html'
@@ -72,7 +72,7 @@ class MailingRecipientDeleteView(LoginRequiredMixin, DeleteView):
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
-class MessageListView(ListView):
+class MessageListView(LoginRequiredMixin, ListView):
     paginate_by = 4
     model = Message
     template_name = 'messages.html'
@@ -133,8 +133,8 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('sending_messages:messages')
 
 
-@method_decorator(cache_page(60 * 15), name='dispatch')
-class MailingListView(ListView):
+@method_decorator(cache_page(60 * 1), name='dispatch')
+class MailingListView(LoginRequiredMixin, ListView):
     paginate_by = 4
     model = Mailing
     template_name = 'mailings.html'

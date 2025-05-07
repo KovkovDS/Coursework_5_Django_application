@@ -14,10 +14,9 @@
             <li class="list-group-item">Менеджер: {{object.owner.last_name}} {{object.owner.first_name}}</li>
             {% endif %}
         </ul>
-        {% if product.owner == user %}
+        {% if user.is_superuser or object.owner == user %}
         <a href="{% url 'sending_messages:editing_message' object.pk %}?next={{ request.GET.next }}" class="btn btn-outline-primary m-2 text-center" role="button" style="max-width: 255px;">
             Редактировать</a>
-        {% if user.is_superuser or product.owner == user %}
         <a href="{% url 'sending_messages:deleting_message' object.pk %}?next={{ request.GET.next }}" class="btn btn-outline-danger m-2 text-center" role="button" style="max-width: 255px;">
             Удалить</a>
         {% endif %}

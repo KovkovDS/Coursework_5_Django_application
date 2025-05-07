@@ -22,7 +22,7 @@
         <a href="{% url 'sending_messages:deleting_recipient' object.pk %}?next={{ request.GET.next }}" class="btn btn-outline-danger m-2 text-center" role="button" style="max-width: 255px;">
             Удалить</a>
         {% endif %}
-    </div>
+    </div>  
 </div>
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <a class="btn btn-outline-primary mt-4" href="{{ request.GET.next }}" role="button" style="max-width: 215px;"><<...Вернуться к дашборду</a>
