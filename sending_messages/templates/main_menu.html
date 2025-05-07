@@ -15,6 +15,7 @@
                 <li><a class="dropdown-item" href="{% url 'sending_messages:mailing-attempts' %}">Попытки рассылки</a></li>
             </ul>
             {% endif %}
+        </div>
     </nav>
 {% if user.is_authenticated %}
 <div>
@@ -28,7 +29,7 @@
                 <button type="submit" class="p-2 btn btn-outline-primary">Выйти
                 </button>
             </form>
-            {% if user.is_superuser or "users.view_user" in perms %}
+            {% if user.is_superuser or users.can_block_user in perm %}
             <div class="btn-group ">
                 <button class="btn btn-outline-primary dropdown-toggle-split dropdown-toggle p-2" data-bs-toggle="dropdown" aria-expanded="false">
                 Администрирование

@@ -49,3 +49,12 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    class Meta:
+        """Класс для изменения поведения полей модели "Пользователь"."""
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ['email', 'last_name', 'first_name', 'phone_number', 'country', 'create_at']
+        permissions = [
+            ("can_block_user", "Заблокировать/разблокировать пользователя"),
+        ]

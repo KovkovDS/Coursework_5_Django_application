@@ -150,8 +150,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 AUTH_USER_MODEL = 'users.User'
 
 LOGIN_URL = 'users:login'
-LOGIN_REDIRECT_URL = "crm/"
-LOGOUT_REDIRECT_URL = 'crm/'
+LOGIN_REDIRECT_URL = "sending_messages:home"
+LOGOUT_REDIRECT_URL = 'sending_messages:home'
 
 CACHE_ENABLED = True
 if CACHE_ENABLED:
