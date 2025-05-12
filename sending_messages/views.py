@@ -29,6 +29,12 @@ class MailingRecipientDetailView(LoginRequiredMixin, DetailView):
     model = MailingRecipient
     template_name = 'recipient.html'
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
 
 class MailingRecipientCreateView(LoginRequiredMixin, CreateView):
     model = MailingRecipient
@@ -61,6 +67,12 @@ class MailingRecipientUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MailingRecipientForm
     template_name = 'editing_recipient.html'
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
     def get_success_url(self, **kwargs):
         return reverse('sending_messages:recipient', args=[self.kwargs.get('pk')])
 
@@ -69,6 +81,12 @@ class MailingRecipientDeleteView(LoginRequiredMixin, DeleteView):
     model = MailingRecipient
     template_name = 'recipients_confirm_delete.html'
     success_url = reverse_lazy('sending_messages:recipients')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
@@ -89,6 +107,12 @@ class MessageListView(LoginRequiredMixin, ListView):
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     template_name = 'message.html'
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 class MessageCreateView(LoginRequiredMixin, CreateView):
@@ -123,6 +147,12 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MessageForm
     template_name = 'editing_message.html'
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
     def get_success_url(self, **kwargs):
         return reverse('sending_messages:message', args=[self.kwargs.get('pk')])
 
@@ -131,6 +161,12 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     template_name = 'messages_confirm_delete.html'
     success_url = reverse_lazy('sending_messages:messages')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 @method_decorator(cache_page(60 * 1), name='dispatch')
@@ -151,6 +187,12 @@ class MailingListView(LoginRequiredMixin, ListView):
 class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
     template_name = 'mailing.html'
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -191,6 +233,12 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MailingForm
     template_name = 'editing_mailing.html'
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
     def get_success_url(self, **kwargs):
         return reverse('sending_messages:mailing', args=[self.kwargs.get('pk')])
 
@@ -199,6 +247,12 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     template_name = 'mailings_confirm_delete.html'
     success_url = reverse_lazy('sending_messages:mailings')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 class MailingAttemptsListView(LoginRequiredMixin, ListView):

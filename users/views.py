@@ -1,5 +1,6 @@
 import secrets
 from django.views.generic import ListView
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.models import Group
@@ -54,6 +55,12 @@ class ProfileView(LoginRequiredMixin, DetailView):
     template_name = 'profile.html'
     context_object_name = 'profile'
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = User
@@ -61,11 +68,23 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'editing_profile.html'
     success_url = reverse_lazy('users:profile')
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
 
 class ProfileDeletingView(DeleteView):
     model = User
     template_name = 'deleting_profile.html'
     success_url = reverse_lazy('users:profiles')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
